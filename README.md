@@ -19,4 +19,4 @@ How To Run:
 - With Python IDLE, just edit the file in IDLE and click F5.
 - With CMD, navigate to the platform-tools directory and type *'python -m dicemaker1.2.py'*
 
-![Alt text]([[image link](https://imgur.com/zzqATr5)]())
+![Image](https://imgur.com/a/Oa4ULUI)
