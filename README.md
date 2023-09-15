@@ -16,8 +16,12 @@ The script also already assumes it's in the C:\platform-tools:\ directory alongs
 If there is interest, I'll wrap this up as an executable but for now it's just a .py script because I wanted to get it out there. Let me know if you guys encounter any bugs, it's definitely still far from perfect. I will not be incorporating compatibility with other emulators, but I welcome somebody else to take on the challenge!
 
 How To Run:
+- Download EXE (This will likely trigger anti-virus. This application does not need admin rights to run; however, it does conduct port scanning (through adb), it does create/terminate subprocesses and threads, and due to the nature of wrapping it using PyInstaller, files may be created in a temp folder that the Python dependencies need. The source code is below and transparent. 
+Relevant VT Link: [VirusTotal - dicemaker1.2.exe](https://www.virustotal.com/gui/file/9ac17825685a508a7bc4f9da343c4895e8be5e865fe69a61e693c7b2a0f38b1c/detection). 
+
+And for additional context, the original dice.exe also gets flagged as malware. [VirusTotal - Dice.exe](https://www.virustotal.com/gui/file/e3cb7800f4fc723cff0a1136be7d352b71882d48a7fb741d06141a317cbfbe8b/behavior)
 - With Python IDLE, just edit the file in IDLE and click F5.
-- With CMD, navigate to the platform-tools directory and type *'python -m dicemaker1.2.py'*
+- With CMD, navigate to the platform-tools directory and type *'python dicemaker1.2.py'*
 
 ![Image](https://i.imgur.com/zzqATr5.png)
 
