@@ -24,4 +24,4 @@ How To Run:
 
 Known Bugs:
 - Earned dice count may not update properly after hitting the reset button
-- Trying to conver the script to an .exe yields various errors
+- Trying to convert the script to an .exe yields various errors
