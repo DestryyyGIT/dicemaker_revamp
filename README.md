@@ -20,3 +20,7 @@ How To Run:
 - With CMD, navigate to the platform-tools directory and type *'python -m dicemaker1.2.py'*
 
 ![Image](https://i.imgur.com/zzqATr5.png)
+
+
+Known Bugs:
+- Earned dice count may not update properly after hitting the reset button
