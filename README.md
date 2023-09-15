@@ -19,4 +19,4 @@ How To Run:
 - With Python IDLE, just edit the file in IDLE and click F5.
 - With CMD, navigate to the platform-tools directory and type *'python -m dicemaker1.2.py'*
 
-[![name](link to image on GH)]([link to your URL](https://github.com/DestryyyGIT/dicemaker_revamp/assets/45083448/85dc33fc-7929-4cfd-a2db-a3577397c6b8)https://github.com/DestryyyGIT/dicemaker_revamp/assets/45083448/85dc33fc-7929-4cfd-a2db-a3577397c6b8)![image]()
+![Alt text]([image link](https://imgur.com/zzqATr5)https://imgur.com/zzqATr5)
