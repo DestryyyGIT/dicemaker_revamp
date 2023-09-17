@@ -1,6 +1,6 @@
 # dicemaker_revamp
 
-## Welcome to Cube Maker Unofficial v1.2!
+## Welcome to Cube Maker Unofficial v1.6!
 
 Hey everyone! I'd like to share with you my progress on updating Cube Maker to be more user friendly, have more features, and generally provide a better time for generating dice. This **Python** script currently only works with **BlueStacks** and contains the following new features:
 - Slightly refactored codebase with improvements to thread handling
