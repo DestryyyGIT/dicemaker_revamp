@@ -7,7 +7,6 @@ from threading import Lock, Thread
 import time
 import tkinter as tk
 from tkinter import ttk, messagebox, Label, Entry, Button, Checkbutton, BooleanVar, font
-import requests
 import re
 
 # Initialize global variables
@@ -21,7 +20,8 @@ ADB_SERVER_START_COMMAND = ["adb", "start-server"]
 ADB_CONNECTION_BASE_COMMAND = ["adb", "-s"]
 ADB_CLEAR_APPS = [
     ["shell", "pm", "clear", "com.scopely.monopolygo"],
-    ["shell", "pm", "clear", "com.google.android.gms"]
+    ["shell", "pm", "clear", "com.google.android.gms"],
+
 ]
 ADB_START_ACTIVITY_COMMANDS = [
     ["shell", "am", "start", "-a", "android.intent.action.VIEW", "-d"],
@@ -130,6 +130,28 @@ def exit_handler():
 def adb_clear(port):
     for command in ADB_CLEAR_APPS:
         subprocess.Popen(ADB_CONNECTION_BASE_COMMAND + [f"localhost:{port}"] + command, creationflags=subprocess.CREATE_NO_WINDOW)
+
+# Function to close tabs, disable the Chrome app, and then re-enable it after a delay for multiple ports
+def close_tabs():
+    try:
+        device_ports_str = device_entry.get().strip()
+        if not device_ports_str:
+            print("No device ports provided.")
+            return
+        command = ["shell", "pm", "clear", "acr.browser.barebones"] 
+        device_ports = device_ports_str.split()
+        for port in device_ports:
+            try:
+                # Closing Lightning Browser Tabs
+                subprocess.Popen(ADB_CONNECTION_BASE_COMMAND + [f"localhost:{port}"] + command, creationflags=subprocess.CREATE_NO_WINDOW)
+                print(f"Closed tabs for Lightning Browser app on port {port}")
+            except Exception as e:
+                print(f"Failed to close tabs for Lightning Browser app on port {port}: {str(e)}")
+        messagebox.showinfo("Info", "Tabs closed successfully.")
+    except Exception as e:
+         print(f"Failed to close tabs fordisable Lightning Browser app on port {port}: {str(e)}")
+        # Wait for 2 seconds
+    time.sleep(2)
 
 # Function to start an activity using ADB with a specified link
 def adb_start_activity(port, link):
@@ -440,7 +462,7 @@ def toggle_forever():
 
 # Create the main application window
 root = tk.Tk()
-root.title("Cube Maker Unofficial v1.2")
+root.title("Cube Maker Unofficial v1.6")
 root.configure(bg="#f0f0f0")
 
 # Get the screen width and height
@@ -459,7 +481,7 @@ frame = ttk.Frame(root, padding=10)
 frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
 # Configure grid columns to have equal weight
-frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
 
 # Create a custom font configuration for bold text
 button_font = ("Segoe UI", 10, "bold")
@@ -471,14 +493,19 @@ header_label.grid(row=0, column=0, columnspan=4, sticky="ew")
 # Create the "Start ADB and Connect Ports" button
 adb_button = Button(frame, text="Start ADB and Connect Ports", command=start_adb_and_connect_ports,
                     padx=20, bg="#9DA5B2", font=button_font, fg="black")
-adb_button.grid(row=2, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
+adb_button.grid(row=2, column=0, columnspan=1, padx=5, pady=10, sticky="ew")
+
+# Create the "Close Tabs" button to the right of "Start ADB"
+close_tabs_button = Button(frame, text="Close Tabs (Lightning Browser Only!)", command=close_tabs,
+                           padx=20, bg="#9DA5B2", font=button_font, fg="black")
+close_tabs_button.grid(row=2, column=1, columnspan=1, padx=5, pady=10, sticky="ew")
 
 # Create labels and input fields for user configuration
 link_label_text = "Enter the HTTP link (space if multilink): *"
 link_label = Label(frame, text=link_label_text, padx=10, pady=5)
 link_label.grid(row=3, column=0, sticky="w")
 
-link_entry = Entry(frame, width=40)
+link_entry = Entry(frame, width=45)
 link_entry.grid(row=3, column=1, padx=10, pady=5)
 link_entry.insert(0, saved_link)
 
@@ -528,10 +555,10 @@ countdown_label.grid(row=11, column=0, columnspan=2, padx=10, pady=5)
 
 # Create buttons to save user input and run actions
 save_button = Button(frame, text="Save Input", command=save_user_input, padx=20, bg="#96BFFD", font=button_font, fg="black")
-save_button.grid(row=12, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+save_button.grid(row=12, column=0, columnspan=1, padx=10, pady=10, sticky="ew")
 
 run_button = Button(frame, text="Run Actions", command=run_actions, padx=20, bg="#66B266", font=button_font, fg="black")
-run_button.grid(row=12, column=2, columnspan=2, padx=10, pady=10, sticky="ew")
+run_button.grid(row=12, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
 
 # Create a button to stop actions (initially disabled)
 stop_button = Button(frame, text="STOP", command=stop_actions, state=tk.DISABLED, padx=20, bg="#FF0000",
@@ -636,7 +663,6 @@ current_dice_count_entry.config(validate="key", validatecommand=(validate_cmd, '
 milestone_track_entry.config(validate="key", validatecommand=(validate_cmd, '%P'))
 countdown_entry.config(validate="key", validatecommand=(validate_cmd, '%P'))
 buffer_period_entry.config(validate="key", validatecommand=(validate_cmd, '%P'))
-
 
 # Start the main event loop
 root.protocol("WM_DELETE_WINDOW", exit_handler)  # Bind the exit_handler to window close
