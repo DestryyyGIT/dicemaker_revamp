@@ -36,3 +36,4 @@ v1.4 Changelog:
 
 Known Bugs:
 - ~~Earned dice count may not update properly after hitting the reset button~~ Fixed!
+- Earned Dice/Total Dice does not consider multiple links being entered
