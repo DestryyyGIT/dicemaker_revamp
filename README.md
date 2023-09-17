@@ -29,7 +29,9 @@ And for additional context, the original dice.exe also gets flagged as malware. 
 ![Image](https://i.imgur.com/6hRqf9x.png)
 
 v1.6 Changelog:
-- Added 'Close Tabs' Feature for Lightning Browser
+- Added 'Close Tabs' Feature for Lightning Browser, implemented auto-tab closing
+- Made debugging statements clearer
+- 
 
 v1.4 Changelog:
 - Initial Release
