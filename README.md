@@ -9,6 +9,7 @@ Hey everyone! I'd like to share with you my progress on updating Cube Maker to b
 - Earned Dice Tracker
 - Control over the buffer period (for those with potato PC's or NASA rigs)
 - Live milestone bar tracker
+- 'Close Tabs' Feature for Lightning Browser 
 
 The script also already assumes it's in the C:\platform-tools:\ directory alongside your ADB files. 
 *Please see here ([▶ dice.exe setup (figma.com)](https://www.figma.com/proto/2d3icPqyv5V8ow4EWgOmvl/Untitled?type=design&node-id=124-84&t=oXRlJ0X4ydqPNtpJ-0&scaling=min-zoom&page-id=0%3A1) for help on getting the ADB folder set up in the right spot alongside your system's environment variables if you haven't already.* 
