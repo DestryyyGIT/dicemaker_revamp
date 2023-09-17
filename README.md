@@ -23,7 +23,7 @@ And for additional context, the original dice.exe also gets flagged as malware. 
 - With Python IDLE, just edit the file in IDLE and click F5.
 - With CMD, navigate to the platform-tools directory and type *'python dicemaker1.2.py'*
 
-![Image](https://i.imgur.com/zzqATr5.png)
+![Image](https://i.imgur.com/6hRqf9x.png)
 
 v1.6 Changelog:
 - Added 'Close Tabs' Feature for Lightning Browser
