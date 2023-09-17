@@ -13,7 +13,7 @@ Hey everyone! I'd like to share with you my progress on updating Cube Maker to b
 The script also already assumes it's in the C:\platform-tools:\ directory alongside your ADB files. 
 *Please see here ([▶ dice.exe setup (figma.com)](https://www.figma.com/proto/2d3icPqyv5V8ow4EWgOmvl/Untitled?type=design&node-id=124-84&t=oXRlJ0X4ydqPNtpJ-0&scaling=min-zoom&page-id=0%3A1) for help on getting the ADB folder set up in the right spot alongside your system's environment variables if you haven't already.* 
 
-If there is interest, I'll wrap this up as an executable but for now it's just a .py script because I wanted to get it out there. Let me know if you guys encounter any bugs, it's definitely still far from perfect. I will not be incorporating compatibility with other emulators, but I welcome somebody else to take on the challenge!
+Let me know if you guys encounter any bugs, it's definitely still far from perfect. I will not be incorporating compatibility with other emulators, but I welcome somebody else to take on the challenge!
 
 How To Run:
 - Download EXE (This will likely trigger anti-virus. This application does not need admin rights to run; however, it does conduct port scanning (through adb), it does create/terminate subprocesses and threads, and due to the nature of wrapping it using PyInstaller, files may be created in a temp folder that the Python dependencies need. The source code is below and transparent. 
@@ -25,6 +25,11 @@ And for additional context, the original dice.exe also gets flagged as malware. 
 
 ![Image](https://i.imgur.com/zzqATr5.png)
 
+v1.6 Changelog:
+- Added 'Close Tabs' Feature for Lightning Browser
+
+v1.4 Changelog:
+- Initial Release
 
 Known Bugs:
 - Earned dice count may not update properly after hitting the reset button
