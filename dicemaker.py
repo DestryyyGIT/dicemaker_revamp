@@ -590,10 +590,14 @@ loop_counter_label.grid(row=16, column=0, columnspan=4, padx=10, pady=5, sticky=
 
 # Create a button to reset dice counts
 def reset_dice_counts():
-    global friend_invites_counter
-    friend_invites_counter = 0
-    dice_count_label.config(text="Earned Dice: 0 dice")
-    total_dice_count_label.config(text="Dice Count: 0 dice")
+    global total_dice
+    total_dice = 0
+    dice_count_label.config(text="Earned Dice: 0 dice (this loop: 0)")
+    total_dice_count_label.config(text="Total Dice Count: 0 dice")
+    milestone_track_entry.delete(0, tk.END)
+    milestone_track_entry.insert(0, "0")
+    current_dice_count_entry.delete(0, tk.END)
+    current_dice_count_entry.insert(0, "0")
     milestone_progress_bar['value'] = 0  # Reset the progress bar value to 0
 
 # Create a button to reset individual input fields
