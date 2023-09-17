@@ -1,18 +1,11 @@
-import configparser
-import concurrent.futures
-import os
-import subprocess
-import threading
+import configparser, concurrent.futures, os, subprocess, threading, time, tkinter as tk, re, math
 from threading import Lock, Thread
-import time
-import tkinter as tk
 from tkinter import ttk, messagebox, Label, Entry, Button, Checkbutton, BooleanVar, font
-import re
 
 # Initialize global variables
 friend_invites_counter = 0
 stop_threads = False
-loop_counter = 1
+loop_counter = 0
 total_dice = 0
 close_tabs_counter = 0  # Counter to keep track of loops for closing tabs
 
@@ -454,7 +447,7 @@ def run_actions_helper(links, selected_ports, countdown_time, remaining_time, de
     if stop_threads:
         return
 
-    print("Loop "+str(loop_counter)+" completed.\n")
+    print("Loop "+str(loop_counter+1)+" completed.\n")
 
 # Function to stop all looping
 def stop_actions():
@@ -475,6 +468,36 @@ def toggle_forever():
     loop_count_entry.config(state=tk.DISABLED if is_forever.get() else tk.NORMAL)
     print(f"\nFOREVER! toggled to {is_forever.get()}")
 
+# Function to calculate the required loops to reach a milestone reward
+def calculate_required_loops(device_ports_str, max_milestone):
+    try:
+        device_count = len(device_ports_str.split())  # Split and count the device ports
+        if device_count == 0:
+            print("No devices, no loops required")
+            return 0  # No devices, no loops required
+
+        loops_needed = math.floor(max_milestone/ (device_count))  # Calculate loops required
+        print(f"Device Ports: {device_ports_str}")
+        print(f"Device Count: {device_count}")
+        print(f"Milestone Reward: {max_milestone}")
+        print(f"Loops Needed: {loops_needed}")
+        return loops_needed
+    except Exception as e:
+        print(f"Error calculating loops needed: {str(e)}")
+        return 0  # Return 0 loops on error
+
+
+# Function to handle the "Quick 530" button click
+def calculate_and_set_loops():
+    device_ports_str = device_entry.get().strip()
+    max_milestone = 50 # Set your milestone reward here
+    loops_needed = calculate_required_loops(device_ports_str, max_milestone)
+    
+    if loops_needed > 0:
+        loop_count_entry.delete(0, tk.END)
+        loop_count_entry.insert(0, str(loops_needed))
+        print(f"Calculated and set loops to {loops_needed}")
+        
 # Create the main application window
 root = tk.Tk()
 root.title("Cube Maker Unofficial v1.6")
@@ -492,8 +515,8 @@ y = (screen_height - 1000) // 2  # 1000 is the window height
 root.geometry("720x800+{}+{}".format(x, y))
 
 # Create a frame to hold the interface elements
-frame = ttk.Frame(root, padding=10)
-frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+frame = ttk.Frame(root, padding=0)
+frame.grid(row=0, column=0, padx=5, pady=10, sticky="nsew")
 
 # Configure grid columns to have equal weight
 frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
@@ -524,21 +547,21 @@ link_entry = Entry(frame, width=45)
 link_entry.grid(row=3, column=1, padx=10, pady=5)
 link_entry.insert(0, saved_link)
 
+device_label = Label(frame, text="Enter device port numbers (space-separated): *")
+device_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+device_entry = Entry(frame, width=30)
+device_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+device_entry.insert(0, saved_device_ports)
+
 loop_count_label = Label(frame, text="Enter the number of times to run the loop: *")
-loop_count_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+loop_count_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
 loop_count_entry = Entry(frame, width=10)
-loop_count_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+loop_count_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
 loop_count_entry.insert(0, saved_loop_count)
 
 is_forever = BooleanVar()
 forever_button = Checkbutton(frame, text="FOREVER!", variable=is_forever, command=toggle_forever)
-forever_button.grid(row=4, column=1, padx=(100, 10), pady=5, sticky="w")
-
-device_label = Label(frame, text="Enter device port numbers (space-separated): *")
-device_label.grid(row=5, column=0, padx=10, pady=5, sticky="w")
-device_entry = Entry(frame, width=30)
-device_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-device_entry.insert(0, saved_device_ports)
+forever_button.grid(row=5, column=1, padx=(100, 10), pady=5, sticky="w")
 
 current_dice_count_label = Label(frame, text="Enter your current dice count:")
 current_dice_count_label.grid(row=6, column=0, padx=10, pady=5, sticky="w")
@@ -570,15 +593,19 @@ countdown_label.grid(row=11, column=0, columnspan=2, padx=10, pady=5)
 
 # Create buttons to save user input and run actions
 save_button = Button(frame, text="Save Input", command=save_user_input, padx=20, bg="#96BFFD", font=button_font, fg="black")
-save_button.grid(row=12, column=0, columnspan=1, padx=10, pady=10, sticky="ew")
+save_button.grid(row=12, column=0, columnspan=1, padx=5, pady=10, sticky="ew")
 
 run_button = Button(frame, text="Run Actions", command=run_actions, padx=20, bg="#66B266", font=button_font, fg="black")
-run_button.grid(row=12, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
+run_button.grid(row=12, column=1, columnspan=1, padx=5, pady=10, sticky="ew")
+
+quick_530_button = Button(frame, text="Quick 530", command=calculate_and_set_loops,
+                       padx=20, bg="#FFA500", font=button_font, fg="black")
+quick_530_button.grid(row=12, column=2, padx=5, pady=10, sticky="ew")
 
 # Create a button to stop actions (initially disabled)
 stop_button = Button(frame, text="STOP", command=stop_actions, state=tk.DISABLED, padx=20, bg="#FF0000",
                      width=10, font=button_font, fg="black", disabledforeground="black")
-stop_button.grid(row=13, column=0, columnspan=4, padx=10, pady=10, sticky="ew")
+stop_button.grid(row=13, column=0, columnspan=4, padx=5, pady=10, sticky="ew")
 
 # Adding labels for milestones (0 to 50) above the progress bar
 milestone_labels_frame = ttk.Frame(frame)
@@ -606,9 +633,12 @@ loop_counter_label.grid(row=16, column=0, columnspan=4, padx=10, pady=5, sticky=
 # Create a button to reset dice counts
 def reset_dice_counts():
     global total_dice
+    global loop_counter
     total_dice = 0
+    loop_counter = 0
     dice_count_label.config(text="Earned Dice: 0 dice (this loop: 0)")
     total_dice_count_label.config(text="Total Dice Count: 0 dice")
+    loop_counter_label.config(text="Loops Completed: 0")
     milestone_track_entry.delete(0, tk.END)
     milestone_track_entry.insert(0, "0")
     current_dice_count_entry.delete(0, tk.END)
@@ -622,11 +652,11 @@ def reset_entry(entry):
 reset_link_button = Button(frame, text="Reset", command=lambda: reset_entry(link_entry))
 reset_link_button.grid(row=3, column=2, padx=10, pady=5, sticky="w")
 
-reset_loop_count_button = Button(frame, text="Reset", command=lambda: reset_entry(loop_count_entry))
-reset_loop_count_button.grid(row=4, column=2, padx=10, pady=5, sticky="w")
-
 reset_device_button = Button(frame, text="Reset", command=lambda: reset_entry(device_entry))
-reset_device_button.grid(row=5, column=2, padx=10, pady=5, sticky="w")
+reset_device_button.grid(row=4, column=2, padx=10, pady=5, sticky="w")
+
+reset_loop_count_button = Button(frame, text="Reset", command=lambda: reset_entry(loop_count_entry))
+reset_loop_count_button.grid(row=5, column=2, padx=10, pady=5, sticky="w")
 
 reset_current_dice_count_button = Button(frame, text="Reset", command=lambda: reset_entry(current_dice_count_entry))
 reset_current_dice_count_button.grid(row=6, column=2, padx=10, pady=5, sticky="w")
