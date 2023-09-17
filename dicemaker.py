@@ -12,8 +12,9 @@ import re
 # Initialize global variables
 friend_invites_counter = 0
 stop_threads = False
-loop_counter = 0
+loop_counter = 1
 total_dice = 0
+close_tabs_counter = 0  # Counter to keep track of loops for closing tabs
 
 # Constants for ADB commands and timing
 ADB_SERVER_START_COMMAND = ["adb", "start-server"]
@@ -144,14 +145,13 @@ def close_tabs():
             try:
                 # Closing Lightning Browser Tabs
                 subprocess.Popen(ADB_CONNECTION_BASE_COMMAND + [f"localhost:{port}"] + command, creationflags=subprocess.CREATE_NO_WINDOW)
-                print(f"Closed tabs for Lightning Browser app on port {port}")
             except Exception as e:
                 print(f"Failed to close tabs for Lightning Browser app on port {port}: {str(e)}")
-        messagebox.showinfo("Info", "Tabs closed successfully.")
+        ##messagebox.showinfo("Info", "Tabs closed successfully.")
+        print(f"\nClosed tabs for Lightning Browser app on all ports.\n")
     except Exception as e:
          print(f"Failed to close tabs fordisable Lightning Browser app on port {port}: {str(e)}")
-        # Wait for 2 seconds
-    time.sleep(2)
+    time.sleep(1)
 
 # Function to start an activity using ADB with a specified link
 def adb_start_activity(port, link):
@@ -248,7 +248,7 @@ def update_dice_count(invites):
         new_milestone_track_progress = (milestone_track_progress + invites) % 50
 
         print(f"Ending milestone progress: {new_milestone_track_progress}/50")
-        print(f"Dice count updated to {total_dice}\n")
+        print(f"Dice count updated to {total_dice}")
 
         update_gui(new_milestone_track_progress, current_dice_count, dice_earned_this_update)
 
@@ -272,7 +272,6 @@ def update_gui(new_milestone_track_progress, current_dice_count, dice_earned_thi
     current_dice_count_entry.delete(0, tk.END)
     current_dice_count_entry.insert(0, str(current_dice_count))
 
-
 update_dice_count_lock = Lock()
 gui_update_lock = Lock()
 
@@ -290,6 +289,7 @@ def run_single_action(port, link, loop_count, countdown_time, remaining_time, de
     for _ in range(loop_count):
         if stop_threads:
             break
+
         adb_clear(port)
         time.sleep(TIME_BETWEEN_COMMANDS)
         adb_start_activity(port, link)
@@ -298,14 +298,11 @@ def run_single_action(port, link, loop_count, countdown_time, remaining_time, de
         for sec in range(countdown_time + 1):  # Adjust the loop range to include the initial value
             if stop_threads:
                 break
-
             with gui_update_lock:  # Use a lock to update GUI components safely
                 countdown_label.config(text=f"Countdown: {remaining_time} seconds")
                 root.update_idletasks()
-
             remaining_time -= 1  # Decrement the remaining_time after updating the GUI
             time.sleep(1)
-
         invites_generated += 1  # Increment by 1, because one invite is generated per loop
 
     if not stop_threads:
@@ -383,33 +380,53 @@ def run_actions():
         action_thread = threading.Thread(target=run_actions_thread, args=(links, loop_count, selected_ports, countdown_time, remaining_time))
 
     action_thread.start()
-    print("Run actions started.")
+    print("Loop started.\n")
 
 # Function to run actions continuously with specified loops
 def run_actions_thread(links, loop_count, selected_ports, countdown_time, remaining_time):
     global stop_threads
-    global loop_counter  # Declare loop_counter as global in this function
-    
-    for _ in range(loop_count):
+    global loop_counter
+    global total_dice
+    global close_tabs_counter
+
+    for link in links:  # Move the loop over links outside the loop_count loop
         if stop_threads:
             break
-        run_actions_helper(links, selected_ports, countdown_time, remaining_time, selected_ports)
-        
-        loop_counter += 1
-        loop_counter_label.config(text=f"Loops Completed: {loop_counter}")
+        print(f"Processing link: {link} \n")  # Print the current link being processed
+
+        for _ in range(loop_count):
+            if stop_threads:
+                break
+            run_actions_helper([link], selected_ports, countdown_time, remaining_time, selected_ports)
+
+            loop_counter += 1
+            loop_counter_label.config(text=f"Loops Completed: {loop_counter}")
+
+            # Check if it's time to close tabs (every 5 loops)
+            close_tabs_counter += 1
+            if close_tabs_counter >= 5:
+                close_tabs_counter = 0
+                close_tabs()
 
 # Function to run actions continuously forever
 def run_actions_forever(links, selected_ports, countdown_time, remaining_time):
     global stop_threads
     global loop_counter  # Declare loop_counter as global in this function
+    global close_tabs_counter  # Add a counter for closing tabs
 
     while not stop_threads:
         run_actions_helper(links, selected_ports, countdown_time, remaining_time, selected_ports)
-        if stop_threads:  
+        if stop_threads:
             break
         loop_counter += 1
         loop_counter_label.config(text=f"Loops Completed: {loop_counter}")
 
+        # Check if it's time to close tabs (every 5 loops)
+        close_tabs_counter += 1
+        if close_tabs_counter >= 5:
+            close_tabs_counter = 0
+            close_tabs()
+            
 # Function to execute actions with multi-threading
 def run_actions_helper(links, selected_ports, countdown_time, remaining_time, device_ports):
     global stop_threads
@@ -437,7 +454,7 @@ def run_actions_helper(links, selected_ports, countdown_time, remaining_time, de
     if stop_threads:
         return
 
-    print("Run actions completed.")
+    print("Loop "+str(loop_counter)+" completed.\n")
 
 # Function to stop all looping
 def stop_actions():
@@ -445,19 +462,17 @@ def stop_actions():
     global loop_counter  # Make sure to use the global variable
     
     stop_threads = True
-    loop_counter = 0  # Reset the loop counter when stopping
+    loop_counter = 1  # Reset the loop counter when stopping
 
     loop_counter_label.config(text="Loops Completed: 0")  # Reset the label
     stop_button.config(state=tk.DISABLED)
     run_button.config(state=tk.NORMAL)  # Re-enable the "run actions" button here
-
     print("Actions stopped.")
 
 # Function to toggle running actions forever
 def toggle_forever():
     # Disable loop_count_entry when running forever
     loop_count_entry.config(state=tk.DISABLED if is_forever.get() else tk.NORMAL)
-
     print(f"\nFOREVER! toggled to {is_forever.get()}")
 
 # Create the main application window
