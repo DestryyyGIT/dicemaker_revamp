@@ -26,7 +26,7 @@ And for additional context, the original dice.exe also gets flagged as malware. 
 
 **Be mindful that dice generators will not work on your account if you have accessed Monopoly Go after version 1.11.0.**
 
-![Image](https://i.imgur.com/6hRqf9x.png)
+![Image](https://i.imgur.com/nKdjqhQ.png)
 
 v1.6 Changelog:
 - Added 'Close Tabs' Feature for Lightning Browser, implemented auto-tab closing
