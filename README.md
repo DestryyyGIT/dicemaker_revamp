@@ -35,4 +35,4 @@ v1.4 Changelog:
 - Initial Release
 
 Known Bugs:
-- Earned dice count may not update properly after hitting the reset button
+- ~~Earned dice count may not update properly after hitting the reset button~~ Fixed!
