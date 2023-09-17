@@ -24,6 +24,7 @@ And for additional context, the original dice.exe also gets flagged as malware. 
 - With Python IDLE, just edit the file in IDLE and click F5.
 - With CMD, navigate to the platform-tools directory and type *'python dicemaker1.2.py'*
 
+**WILL NOT WORK ON MONOPOLY GO VERSION 1.11.0 OR ABOVE.**
 ![Image](https://i.imgur.com/6hRqf9x.png)
 
 v1.6 Changelog:
